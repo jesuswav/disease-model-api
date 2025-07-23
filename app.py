@@ -4,9 +4,12 @@ from utils import preprocess_image
 import numpy as np
 import os
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
 
 # Crear app Flask
 app = Flask(__name__)
+
+CORS(app)  # 🔓 Habilita CORS globalmente
 
 # Cargar el modelo
 MODEL_PATH = "modelo.keras"
