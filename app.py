@@ -12,6 +12,24 @@ app = Flask(__name__)
 MODEL_PATH = "modelo.keras"
 model = load_model(MODEL_PATH)
 
+# Diccionario de clases
+class_dict = {
+    'Maize fall armyworm': 0,
+    'Maize grasshoper': 1,
+    'Maize healthy': 2,
+    'Maize leaf beetle': 3,
+    'Maize leaf blight': 4,
+    'Maize leaf spot': 5,
+    'Maize streak virus': 6,
+    'Tomato healthy': 7,
+    'Tomato leaf blight': 8,
+    'Tomato leaf curl': 9,
+    'Tomato septoria leaf spot': 10,
+    'Tomato verticulium wilt': 11
+}
+# Invertir el diccionario para mapear índices a nombres
+idx_to_class = {v: k for k, v in class_dict.items()}
+
 # Ruta para recibir imágenes y hacer predicción
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -32,9 +50,11 @@ def predict():
         prediction = model.predict(img_array)
         predicted_class = int(np.argmax(prediction))
         confidence = float(np.max(prediction))
+        class_name = idx_to_class.get(predicted_class, "Clase desconocida")
 
         return jsonify({
-            'predicted_class': predicted_class,
+            'predicted_class_index': predicted_class,
+            'predicted_class_name': class_name,
             'confidence': round(confidence, 4)
         })
     except Exception as e:
